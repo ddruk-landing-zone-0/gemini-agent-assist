@@ -222,9 +222,43 @@ class GeminiJsonEngine():
     
     def __call__(self, user_query):
         """
-        Input: user_query: str
+        Input: user_query: List[str] or str
         Output: response: List[Dict]
         """
-        _content_roles = self.content_roles + [{"role": "user", "content": user_query}]
+        if isinstance(user_query, str):
+            _content_roles = self.content_roles + [{"role": "user", "content": user_query}]
+        elif isinstance(user_query, list):
+            _content_roles = self.content_roles + [{"role": "user", "content": item} for item in user_query]
+        else:
+            raise ValueError("Input must be a string or list")
         response = self.model.generate_funccall_content(_content_roles, tools=[self.schema], simplify_output=True)
         return [r['args'] for r in response]
+    
+
+
+####################################################################################################
+# The following code is used to create a GeminiSimpleChatEngine class that can be used to interact with the Gemini API.
+# It is a wrapper around the GeminiModel class that simplifies simple chat interactions.
+####################################################################################################
+
+class GeminiSimpleChatEngine:
+    def __init__(self, model_name, temperature, max_output_tokens, systemInstructions):
+        self.model = GeminiModel(model_name=model_name, temperature=temperature, max_output_tokens=max_output_tokens)
+        self.content_roles = []
+        if systemInstructions:
+            self.content_roles.append({"role": "user", "content": systemInstructions})
+    
+    def __call__(self, user_query):
+        """
+        Input: user_query: List[str] or str
+        Output: response: str
+        """
+        if isinstance(user_query, str):
+            _content_roles = self.content_roles + [{"role": "user", "content": user_query}]
+        elif isinstance(user_query, list):
+            _content_roles = self.content_roles + [{"role": "user", "content": item} for item in user_query]
+        else:
+            raise ValueError("Input must be a string or list")
+        
+        response = self.model.generate_content(_content_roles, simplify_output=True)
+        return response
