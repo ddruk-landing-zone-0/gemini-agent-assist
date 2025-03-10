@@ -267,7 +267,7 @@ def register_data(state: AgentState):
     TITLE_DATA_INMEM_DB = get_title_data_inmemory_db(rule_based_title_comment_data)
 
     LOGGER.info(f"State: {state['state']} | Data registration completed, saved the data to in-memory DB. Global variable TITLE_DATA_INMEM_DB is set")
-
+    
     return state
 
 

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Workflow</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .step-container { display: flex; flex-direction: column; width: 100%; }
+        .step-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; width: 100%; text-align: left; }
+        .step-panel { 
+            background: white; padding: 15px; width: 100%; overflow-x: auto; 
+            display: flex; flex-wrap: nowrap; border-radius: 8px; 
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); margin-bottom: 15px; 
+        }
+        .card { 
+            min-width: 250px; padding: 15px; margin: 5px; border-radius: 8px; 
+            background: #f9f9f9; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1); 
+            position: relative; white-space: normal; 
+        }
+        .internal-card { 
+            min-width: 100%; padding: 15px; border-radius: 8px; 
+            background: #ffeb3b; font-weight: bold; text-align: center; 
+        }
+        .arrow { font-size: 24px; margin: 10px 0; text-align: center; }
+        .scroll-wrapper { display: flex; overflow-x: auto; white-space: nowrap; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        table, th, td { border: 1px solid black; padding: 5px; text-align: left; }
+    </style>
+</head>
+<body>
+
+    <h2>Agentic Thinking Steps</h2>
+    <div id="workflow-container" class="step-container"></div>
+
+    <script>
+        let stepData = {}; // Store fetched step data
+
+        async function fetchSteps() {
+            try {
+                const response = await fetch("/agent/get-steps");
+                const data = await response.json();
+                stepData = data.results; 
+                renderSteps();
+            } catch (error) {
+                console.error("Error fetching steps:", error);
+            }
+        }
+
+        function renderSteps() {
+            const container = document.getElementById("workflow-container");
+            container.innerHTML = "";
+
+            const stepNames = [
+                { key: "refine_old_summaries", title: "1. Refine Old Summaries", type: "text_list" },
+                { key: "subj_query_generation", title: "2. Subject Query Generation", type: "query_list" },
+                { key: "stat_query_generation", title: "3. Statistical Query Generation", type: "query_list" },
+                { key: "register_data", title: "4. Register Data", type: "internal" },
+                { key: "sql_script_generation", title: "5. SQL Script Generation", type: "sql_script" },
+                { key: "sql_result", title: "6. SQL Result Processing", type: "sql_result" },
+                { key: "bucket_query_generation", title: "7. Bucket Query Generation", type: "internal" },
+                { key: "final_result", title: "8. Final Result Compilation", type: "text_list" }
+            ];
+
+            stepNames.forEach((step, index) => {
+                const stepTitle = document.createElement("div");
+                stepTitle.className = "step-title";
+                stepTitle.innerText = step.title;
+                container.appendChild(stepTitle);
+
+                const stepPanel = document.createElement("div");
+                stepPanel.className = "step-panel";
+                
+                const scrollWrapper = document.createElement("div");
+                scrollWrapper.className = "scroll-wrapper";
+
+                const stepResults = stepData[step.key]?.result || [];
+
+                if (step.type === "internal") {
+                    const internalCard = document.createElement("div");
+                    internalCard.className = "internal-card";
+                    internalCard.innerText = "⚠️ Handled by the Internal System ⚠️";
+                    stepPanel.appendChild(internalCard);
+                }
+                else if (step.type === "text_list") {
+                    stepResults.forEach((text) => {
+                        const card = document.createElement("div");
+                        card.className = "card";
+                        card.innerHTML = `<p>${text}</p>`;
+                        scrollWrapper.appendChild(card);
+                    });
+                } 
+                else if (step.type === "query_list") {
+                    stepResults.forEach((queryObj) => {
+                        const card = document.createElement("div");
+                        card.className = "card";
+                        card.innerHTML = `<p><b>Query:</b> ${queryObj.query}</p><p><b>ID:</b> ${queryObj.id}</p>`;
+                        scrollWrapper.appendChild(card);
+                    });
+                } 
+                else if (step.type === "sql_script") {
+                    stepResults.forEach((sqlObj) => {
+                        const card = document.createElement("div");
+                        card.className = "card";
+                        card.innerHTML = `
+                            <p><b>ID:</b> ${sqlObj.id}</p>
+                            <p><b>Description:</b> ${sqlObj.description}</p>
+                            <p><b>SQL Script:</b> <code>${sqlObj.sql_script}</code></p>
+                        `;
+                        scrollWrapper.appendChild(card);
+                    });
+                } 
+                else if (step.type === "sql_result") {
+                    stepResults.forEach((sqlObj) => {
+                        const card = document.createElement("div");
+                        card.className = "card";
+                        let tableRows = sqlObj.data.slice(0, 20).map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
+                        card.innerHTML = `
+                            <p><b>ID:</b> ${sqlObj.id}</p>
+                            <p><b>Status:</b> ${sqlObj.status}</p>
+                            <p><b>Description:</b> ${sqlObj.description}</p>
+                            <p><b>SQL Script:</b> <code>${sqlObj.sql_script}</code></p>
+                            <table>
+                                <thead>
+                                    <tr>${sqlObj.columns.map(col => `<th>${col}</th>`).join('')}</tr>
+                                </thead>
+                                <tbody>
+                                    ${tableRows}
+                                </tbody>
+                            </table>
+                        `;
+                        scrollWrapper.appendChild(card);
+                    });
+                }
+
+                stepPanel.appendChild(scrollWrapper);
+                container.appendChild(stepPanel);
+
+                if (index < stepNames.length - 1) {
+                    const arrow = document.createElement("div");
+                    arrow.className = "arrow";
+                    arrow.innerHTML = "↓";
+                    container.appendChild(arrow);
+                }
+            });
+        }
+
+        fetchSteps();
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previous Commentaries</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-5">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold text-center mb-5">Previous Commentaries</h1>
+
+        <!-- Grid Container -->
+        <div id="commentaryGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+
+        <!-- Apply Changes Button -->
+        <button id="applyChangesBtn" class="mt-5 w-full bg-blue-500 text-white font-bold py-2 rounded hover:bg-blue-600">
+            Apply Changes
+        </button>
+    </div>
+
+    <script>
+        let comments = [];
+
+        async function fetchComments() {
+            try {
+                const response = await fetch("/agent/get-pre-loaded-data");
+                const data = await response.json();
+                comments = data.sample_summarized_pnl_commentaries;
+                renderComments();
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        function renderComments() {
+            const grid = document.getElementById("commentaryGrid");
+            grid.innerHTML = ""; 
+
+            comments.forEach((comment, index) => {
+                grid.innerHTML += `
+                    <div class="bg-white p-4 rounded shadow flex justify-between items-center">
+                        <span>${comment}</span>
+                        <button class="text-red-500 font-bold" onclick="deleteComment(${index})">❌</button>
+                    </div>
+                `;
+            });
+
+            // Add Input Card
+            grid.innerHTML += `
+                <div class="bg-gray-200 p-4 rounded shadow flex items-center space-x-2">
+                    <input id="newComment" type="text" class="flex-grow px-2 py-1 border rounded" placeholder="Add new comment">
+                    <button class="bg-green-500 text-white px-3 py-1 rounded" onclick="addComment()">➕</button>
+                </div>
+            `;
+        }
+
+        function addComment() {
+            const input = document.getElementById("newComment");
+            const newComment = input.value.trim();
+            if (newComment) {
+                comments.push(newComment);
+                input.value = "";
+                renderComments();
+            }
+        }
+
+        function deleteComment(index) {
+            comments.splice(index, 1);
+            renderComments();
+        }
+
+        async function applyChanges() {
+            try {
+                const response = await fetch("/agent/set-pre-loaded-data", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ sample_summarized_pnl_commentaries: comments })
+                });
+                if (response.ok) {
+                    alert("Changes applied successfully!");
+                } else {
+                    alert("Failed to apply changes.");
+                }
+            } catch (error) {
+                console.error("Error applying changes:", error);
+            }
+        }
+
+        document.getElementById("applyChangesBtn").addEventListener("click", applyChanges);
+
+        // Fetch comments on page load
+        fetchComments();
+    </script>
+</body>
+</html>
