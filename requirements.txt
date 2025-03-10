@@ -7,3 +7,4 @@ colorlog
 langgraph
 langchain
 grandalf
+gunicorn
