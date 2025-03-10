@@ -491,11 +491,11 @@ def generate_bucket_query_agent(state: AgentState):
 
     
     prompts = [[
-        f"You are financial expert. Your task is to provide a DETAILED and SOPHISTICATED financial summary over P&L Trend and other financial metrics. You are provided with some structured questions and their answers. You need to generate the summary from the insights provided in the answers.",
+        f"You are financial expert. Your task is to provide a DETAILED financial summary over P&L Trend and other financial metrics. You are provided with some structured questions and their answers. You need to generate the summary from the insights provided in the answers.",
         f"The meaning for the columns are as follows: BUIS means Business Unit, DATE means Day of calcualtion, NET means Net Profit/Loss, Factor such as IRDelta, IRGamma, FXDelta etc., PROF_LOSS means Profit or Loss, CUR means Currency, PF means Portfolio, DSK means Desk.",
         f"Here is a sample summary for reference (Just follow the pattern, not the exact values): {old_summary}",
         f"Here are the structured questions and their answers: {qa}",
-        f"Generate a detailed financial summary based on the insights provided in the answers."
+        f"Generate a detailed financial summary based on the insights provided in the answers. The statistical terms such as average, max , min etc. should be summarized in a financial point of view not a statistical point of view. "
     ] for qa in [sql_subj_result_qa_s, sql_stat_result_qa_s]]
 
 
@@ -536,7 +536,7 @@ def generate_final_result(state: AgentState):
     # Initialize the model
     gemini_simple_chat_engine = GeminiSimpleChatEngine(model_name=state['model']['model_name'], 
                                                    temperature=state['model']['temperature'],
-                                                   max_output_tokens=1024,
+                                                   max_output_tokens=2048,
                                                    systemInstructions=None,
                                                    max_retries=state['model']['max_retries'],
                                                    wait_time=state['model']['wait_time'])

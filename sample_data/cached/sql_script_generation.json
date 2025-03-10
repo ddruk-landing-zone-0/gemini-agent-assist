@@ -1,0 +1,445 @@
+{
+    "result": [
+        {
+            "description": "Find the factors that contributed the highest net profit/loss.",
+            "sql_script": "SELECT FACTOR FROM title_data ORDER BY NET DESC LIMIT 1",
+            "columns": [
+                "FACTOR"
+            ],
+            "id": "c294e38e35f0166be6daac7b2ed4e41ec670357c93e08ac5f175338e5d2ed726",
+            "flag": "cold"
+        },
+        {
+            "sql_script": "SELECT CUR, PF FROM title_data ORDER BY PROF_LOSS DESC LIMIT 10",
+            "description": "Find the currencies driving the top-performing portfolios.",
+            "columns": [
+                "CUR",
+                "PF"
+            ],
+            "id": "04b738ec04a399bdbdb8728b17d980178e00dc7918943bc264c11a82b3093b2f",
+            "flag": "cold"
+        },
+        {
+            "description": "Calculate the average NET and PROF_LOSS for each BUIS by DATE.",
+            "columns": [
+                "BUIS",
+                "DATE",
+                "AVG(NET)",
+                "AVG(PROF_LOSS)"
+            ],
+            "sql_script": "SELECT BUIS, DATE, AVG(NET), AVG(PROF_LOSS) FROM title_data GROUP BY BUIS, DATE",
+            "id": "4c5ec8435be11380c73fa867c0c29e18d1d07efecb4c6a2c691a423963bfe68e",
+            "flag": "cold"
+        },
+        {
+            "sql_script": "SELECT BUIS FROM title_data ORDER BY NET DESC LIMIT 5",
+            "columns": [
+                "BUIS"
+            ],
+            "description": "Find the top 5 BUIS with the highest NET profits",
+            "id": "0421c8eabb7eb2cf943c64ea36ea1fe08e370967b08e5c02f79499b886824caf",
+            "flag": "cold"
+        },
+        {
+            "sql_script": "SELECT BUIS FROM title_data WHERE PROF_LOSS = 'LOSS' ORDER BY NET ASC LIMIT 5",
+            "description": "Find the bottom 5 BUIS with the lowest NET losses",
+            "columns": [
+                "BUIS"
+            ],
+            "id": "c4b85835ada7791539b9eb3d0b782d2c1ddf9b275ba7bf7a11f9a3dd52a96106",
+            "flag": "cold"
+        },
+        {
+            "sql_script": "SELECT PF, SUM(NET) FROM title_data GROUP BY PF",
+            "columns": [
+                "PF",
+                "SUM(NET)"
+            ],
+            "description": "Calculate the sum of NET profit/loss for each PF.",
+            "id": "6286e637c0127eccac3d809fc400e83c50cbfeb058758fb1924e40633ffcc489",
+            "flag": "cold"
+        },
+        {
+            "sql_script": "SELECT BUIS, DATE, max(NET) FROM title_data GROUP BY BUIS, DATE",
+            "description": "Find the maximum NET profit for each BUIS on each DATE",
+            "columns": [
+                "BUIS",
+                "DATE",
+                "max(NET)"
+            ],
+            "id": "3413e8ae4e062d337323259c616806209c6e3aabd5ba68d5ba67eeb537aa085a",
+            "flag": "cold"
+        },
+        {
+            "columns": [
+                "BUIS",
+                "DATE",
+                "min(NET)"
+            ],
+            "description": "Find the minimum NET loss for each BUIS on each DATE.",
+            "sql_script": "SELECT BUIS, DATE, min(NET) FROM title_data WHERE PROF_LOSS = 'LOSS' GROUP BY BUIS, DATE",
+            "id": "970d4b0c54cbb8234f2b74d850c205331481b2627beaefc75c0523d0aaa3d985",
+            "flag": "cold"
+        },
+        {
+            "description": "Find the top 5 DSKs with the highest NET profit/loss.",
+            "columns": [
+                "DSK"
+            ],
+            "sql_script": "SELECT DSK FROM title_data ORDER BY NET DESC LIMIT 5",
+            "id": "88c73cdf5d132bfc71e9ccc473f44a3a686f0fd895097252c1b1e3af2546453e",
+            "flag": "cold"
+        },
+        {
+            "columns": [
+                "DSK"
+            ],
+            "sql_script": "SELECT DSK FROM title_data ORDER BY NET ASC LIMIT 5",
+            "description": "Find the bottom 5 DSK with the lowest NET profit/loss.",
+            "id": "3ace89b46b541f985a67bfef87ca26ba28e0cba9b9ab563b75034ba13df25f9c",
+            "flag": "cold"
+        },
+        {
+            "description": "Calculate the average NET profit/loss for each currency.",
+            "sql_script": "SELECT CUR, AVG(NET) FROM title_data GROUP BY CUR",
+            "columns": [
+                "CUR",
+                "AVG(NET)"
+            ],
+            "id": "d7063ca6466a8cda096d3236dd9d7c74e8b9b2e5b5543228cf3b11be610e4bf5",
+            "flag": "cold"
+        },
+        {
+            "columns": [
+                "FACTOR",
+                "SUM(NET)"
+            ],
+            "sql_script": "SELECT FACTOR, SUM(NET) FROM title_data GROUP BY FACTOR",
+            "description": "Calculate the sum of NET profit/loss for each FACTOR",
+            "id": "f02d29ffeb4557c2588d9587f105d0085e2b0d1f2c82c73e20913eeaf4b7f767",
+            "flag": "cold"
+        },
+        {
+            "sql_script": "SELECT PF FROM title_data ORDER BY NET DESC LIMIT 5",
+            "columns": [
+                "PF"
+            ],
+            "description": "Find the top 5 PF with the highest NET profit/loss.",
+            "id": "b392885b1fe8eb3eb171a81b72586cf97ece9c7cebb5b83d16ad9b51696453c1",
+            "flag": "cold"
+        },
+        {
+            "description": "Find the bottom 5 PF with the lowest NET profit/loss.",
+            "sql_script": "SELECT PF FROM title_data ORDER BY NET ASC LIMIT 5",
+            "columns": [
+                "PF"
+            ],
+            "id": "be08436e80e7d5fd02e2e16940ccb55af7c6973326c2375cd48230e9fd71e9fa",
+            "flag": "cold"
+        },
+        {
+            "description": "Calculate the mean NET and PROF_LOSS for each BUIS and DATE combination.",
+            "sql_script": "SELECT BUIS, DATE, AVG(NET), AVG(CASE WHEN PROF_LOSS = 'PROFFIT' THEN 1 WHEN PROF_LOSS = 'LOSS' THEN -1 ELSE 0 END) AS AVG_PROF_LOSS FROM title_data GROUP BY BUIS, DATE",
+            "columns": [
+                "BUIS",
+                "DATE",
+                "AVG(NET)",
+                "AVG(PROF_LOSS)"
+            ],
+            "id": "4ce7f90786453097d5b9182b1e88163ef8ba30913cb633c8ce29ac0117fde638",
+            "flag": "cold"
+        },
+        {
+            "description": "Calculate average, max, min, sum, and count of NET",
+            "columns": [
+                "AVG(NET)",
+                "MAX(NET)",
+                "MIN(NET)",
+                "SUM(NET)",
+                "COUNT(NET)"
+            ],
+            "sql_script": "SELECT AVG(NET), MAX(NET), MIN(NET), SUM(NET), COUNT(NET) FROM title_data",
+            "id": "8b8034f008ceef96eaf98870b56bffa6f470dc2866a07b75ded62f323eeb07dc",
+            "flag": "cold"
+        },
+        {
+            "description": "Calculate average, max, min, variance, and sum of PROF_LOSS grouped by BUIS",
+            "columns": [
+                "BUIS",
+                "AVG(PROF_LOSS)",
+                "MAX(PROF_LOSS)",
+                "MIN(PROF_LOSS)",
+                "SUM(PROF_LOSS)"
+            ],
+            "sql_script": "SELECT BUIS, AVG(CAST(PROF_LOSS AS REAL)), MAX(CAST(PROF_LOSS AS REAL)), MIN(CAST(PROF_LOSS AS REAL)), SUM(CAST(PROF_LOSS AS REAL)) FROM title_data GROUP BY BUIS",
+            "id": "00140b887115de2019c84e1553e432b7fa1d020633400c2f18193f775233f6aa",
+            "flag": "cold"
+        },
+        {
+            "columns": [
+                "CUR",
+                "AVG(NET)",
+                "MAX(NET)",
+                "MIN(NET)",
+                "SUM(NET)",
+                "COUNT(NET)"
+            ],
+            "description": "Calculate average, max, min, variance, and sum of NET profit/loss grouped by currency.",
+            "sql_script": "SELECT CUR, AVG(NET), MAX(NET), MIN(NET), (SUM(NET*NET) - SUM(NET)*SUM(NET)/COUNT(NET))/(COUNT(NET)-1), SUM(NET) FROM title_data GROUP BY CUR",
+            "id": "d5b85a38ea47fa3751a676b9f9fb44b2e10456dfb2fe5e42209086c7fd9a0a25",
+            "flag": "cold"
+        },
+        {
+            "sql_script": "WITH PortfolioAverages AS (SELECT PF, AVG(NET) AS avg_net FROM title_data GROUP BY PF), PortfolioCounts AS (SELECT PF, COUNT(*) AS portfolio_count FROM title_data GROUP BY PF ORDER BY portfolio_count DESC LIMIT 5) SELECT td.PF, AVG(td.NET), MAX(td.NET), MIN(td.NET), SUM((td.NET - pa.avg_net) * (td.NET - pa.avg_net)) / (COUNT(td.NET) - 1), SUM(td.NET) FROM title_data td JOIN PortfolioAverages pa ON td.PF = pa.PF JOIN PortfolioCounts pc ON td.PF = pc.PF GROUP BY td.PF",
+            "columns": [
+                "PF",
+                "AVG(NET)",
+                "MAX(NET)",
+                "MIN(NET)",
+                "SUM((NET - avg_net) * (NET - avg_net)) / (COUNT(NET) - 1)",
+                "SUM(NET)"
+            ],
+            "description": "Calculate average, max, min, variance, and sum of NET profit/loss grouped by top 5 PF portfolios",
+            "id": "36b8f632257a4e52141e0784aa58d2e05015cd31d4c5d91e2f7d941db5370261",
+            "flag": "cold"
+        },
+        {
+            "columns": [
+                "PF",
+                "AVG(NET)",
+                "MAX(NET)",
+                "MIN(NET)",
+                "SUM(NET)",
+                "COUNT(NET)"
+            ],
+            "sql_script": "SELECT PF, AVG(NET), MAX(NET), MIN(NET), SUM(NET), COUNT(NET) FROM title_data GROUP BY PF ORDER BY SUM(NET) ASC LIMIT 5",
+            "description": "Calculate average, max, min, variance, and sum of NET profit/loss grouped by bottom 5 PF portfolios",
+            "id": "196d4476546291b3adbeeaef3568d6b73d25677ebd15a318b4548bbb4784f6d5",
+            "flag": "cold"
+        },
+        {
+            "columns": [
+                "DSK",
+                "AVG(NET)",
+                "MAX(NET)",
+                "MIN(NET)",
+                "SUM(NET)",
+                "COUNT(NET)",
+                "SUM((NET - avg_net) * (NET - avg_net)) / COUNT(NET)"
+            ],
+            "description": "calculate average, max, min, variance, and sum of NET profit/loss grouped by top 5 DSK desks",
+            "sql_script": "WITH DeskSummary AS (SELECT DSK, AVG(NET) AS avg_net, MAX(NET) AS max_net, MIN(NET) AS min_net, SUM(NET) AS sum_net, COUNT(NET) AS count_net FROM title_data GROUP BY DSK ORDER BY SUM(NET) DESC LIMIT 5) SELECT DSK, avg_net, max_net, min_net, sum_net, count_net, SUM((title_data.NET - DeskSummary.avg_net) * (title_data.NET - DeskSummary.avg_net)) / DeskSummary.count_net AS variance FROM title_data JOIN DeskSummary ON title_data.DSK = DeskSummary.DSK GROUP BY DSK, avg_net, max_net, min_net, sum_net, count_net ORDER BY sum_net DESC",
+            "id": "2f9c893059754590155ea6007bde609e2ed820f2af88c87af03a6011356aca47",
+            "flag": "cold"
+        },
+        {
+            "columns": [
+                "AVG(NET)",
+                "MAX(NET)",
+                "MIN(NET)",
+                "SUM(NET)",
+                "DSK"
+            ],
+            "sql_script": "SELECT AVG(NET), MAX(NET), MIN(NET), SUM(NET), DSK FROM title_data WHERE DSK IN (SELECT DSK FROM title_data GROUP BY DSK ORDER BY SUM(NET) ASC LIMIT 5) GROUP BY DSK",
+            "description": "Calculate average, max, min, variance, and sum of NET profit/loss grouped by bottom 5 DSK desks",
+            "id": "5e0eaffee842e76bd7f79fa53308d0669714d64a0b4296d1517618dc41d80501",
+            "flag": "cold"
+        },
+        {
+            "sql_script": "SELECT CUR, AVG(NET) AS average_net FROM title_data GROUP BY CUR ORDER BY average_net DESC",
+            "description": "Calculate the average NET profit/loss for each currency and rank them in descending order.",
+            "columns": [
+                "CUR",
+                "AVG(NET)"
+            ],
+            "id": "b87a5d7acb84000f966bf338560e38a5eb44c6dddf2a63b37b6b4001b09111ea",
+            "flag": "cold"
+        },
+        {
+            "description": "Find the bottom currencies by average NET profit/loss.",
+            "columns": [
+                "CUR",
+                "AVG(NET)"
+            ],
+            "sql_script": "SELECT CUR, AVG(NET) AS Average_NET FROM title_data GROUP BY CUR ORDER BY Average_NET ASC LIMIT 5;",
+            "id": "9ca5b5be7129fe791fd3b4d632a3345e8d20dd4e9c11e75753dfc0b97e7610d5",
+            "flag": "cold"
+        },
+        {
+            "columns": [
+                "FACTOR",
+                "count(*)"
+            ],
+            "sql_script": "SELECT FACTOR, count(*) FROM title_data GROUP BY FACTOR",
+            "description": "Counts the number of transactions for each factor.",
+            "id": "1b2f590b6ce1008390a2aca69123d754a014f2a0753911662b90343163b4e484",
+            "flag": "cold"
+        },
+        {
+            "columns": [
+                "FACTOR",
+                "Percentage Contribution"
+            ],
+            "description": "Calculate the percentage contribution of each FACTOR to the total profit/loss.",
+            "sql_script": "SELECT FACTOR, (SUM(PROF_LOSS) * 100.0 / (SELECT SUM(PROF_LOSS) FROM title_data)) AS Percentage_Contribution FROM title_data GROUP BY FACTOR",
+            "id": "02a96883298cf5328c0efa81a36e9e3c7b72197db5b421db9632147faec06950",
+            "flag": "cold"
+        },
+        {
+            "sql_script": "SELECT DATE, sum(NET) FROM title_data GROUP BY DATE ORDER BY DATE",
+            "description": "Calculate the trend of total NET profit/loss over time (daily, monthly, yearly).",
+            "columns": [
+                "DATE",
+                "sum(NET)"
+            ],
+            "id": "8f83b26c136142f8d8413e2ff054d4f1085a7ed6e475d4eb704ef0e0e24d610c",
+            "flag": "cold"
+        },
+        {
+            "description": "Calculate the 7-day moving average of NET profit/loss.",
+            "sql_script": "SELECT DATE, AVG(NET) OVER (ORDER BY DATE ASC ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS moving_average FROM title_data GROUP BY DATE ORDER BY DATE",
+            "columns": [
+                "DATE",
+                "AVG(NET)"
+            ],
+            "id": "0407660a4ac8d38a7f74e7ae0d0c12249dace58013f0e9fb74e3074a7a8c198a",
+            "flag": "cold"
+        },
+        {
+            "description": "Calculate the standard deviation of NET profit/loss grouped by BUIS",
+            "columns": [
+                "BUIS",
+                "stddev_net"
+            ],
+            "sql_script": "SELECT BUIS, SUM(NET*NET) - COUNT(NET) * AVG(NET) * AVG(NET) AS stddev_net FROM title_data GROUP BY BUIS",
+            "id": "2967ca3969e7f10e3f4da3e1493968cff57700f7b71278d085ad7536da2689ce",
+            "flag": "cold"
+        },
+        {
+            "columns": [
+                "CORRELATION"
+            ],
+            "sql_script": "SELECT corr(CASE WHEN FACTOR = 'BondBasis' THEN 1 WHEN FACTOR = 'FXDelta' THEN 2 WHEN FACTOR = 'IRDelta' THEN 3 ELSE 0 END, CAST(NET AS REAL)) FROM title_data",
+            "description": "Calculate the correlation between FACTOR and NET profit/loss.",
+            "id": "422e1189121c9de3fbc90fbd8998b753a71a883692dcf373b6f47db010a5d966",
+            "flag": "cold"
+        },
+        {
+            "description": "Calculate skewness and kurtosis of NET profit/loss distribution.",
+            "columns": [
+                "skewness",
+                "kurtosis"
+            ],
+            "sql_script": "\nWITH\n  Data AS (\n    SELECT\n      CAST(NET AS REAL) AS NetValue\n    FROM title_data\n  ),\n  Calculations AS (\n    SELECT\n      (SUM(NetValue)) AS SumX,\n      SUM(NetValue * NetValue) AS SumX2,\n      SUM(NetValue * NetValue * NetValue) AS SumX3,\n      SUM(NetValue * NetValue * NetValue * NetValue) AS SumX4,\n      COUNT(NetValue) AS N,\n      AVG(NetValue) AS Average\n    FROM Data\n  ),\n  StdDev AS (\n    SELECT\n      SQRT(SUMX2 / N - Average * Average) AS StandardDeviation\n    FROM Calculations\n  ),\n  Skewness AS (\n    SELECT\n      (\n        (SUMX3 / (SELECT N FROM Calculations)) - 3 * (SELECT Average FROM Calculations) * (SUMX2 / (SELECT N FROM Calculations)) + 2 * POWER((SELECT Average FROM Calculations), 3)\n      ) / POWER((SELECT StandardDeviation FROM StdDev), 3) AS Skew\n    FROM Calculations\n  ),\n  Kurtosis AS (\n    SELECT\n      (\n        (SUMX4 / (SELECT N FROM Calculations)) - 4 * (SELECT Average FROM Calculations) * (SUMX3 / (SELECT N FROM Calculations)) + 6 * POWER((SELECT Average FROM Calculations), 2) * (SUMX2 / (SELECT N FROM Calculations)) - 3 * POWER((SELECT Average FROM Calculations), 4)\n      ) / POWER((SELECT StandardDeviation FROM StdDev), 4) - 3 AS Kurt\n    FROM Calculations\n  )\nSELECT\n  Skew AS skewness,\n  Kurt AS kurtosis\nFROM Skewness, Kurtosis\n",
+            "id": "314f1a272553aa2460b7beb7d8f736df2f5ac3f8e0632614d220bb9f04afba7f",
+            "flag": "cold"
+        },
+        {
+            "description": "Calculate the standard deviation of NET for each PF portfolio and then find the portfolios with the highest standard deviation.",
+            "sql_script": "SELECT PF, SUM(NET * NET) - COUNT(NET) * AVG(NET) * AVG(NET) AS stddev_net FROM title_data GROUP BY PF ORDER BY stddev_net DESC",
+            "columns": [
+                "PF",
+                "stddev_net"
+            ],
+            "id": "c5a383279282cf5b5b51d6e150c7d89becdcb02ea0d038e2717e70536ddbbce4",
+            "flag": "cold"
+        },
+        {
+            "sql_script": "SELECT DSK, SUM(NET * NET) - SUM(NET) * SUM(NET) / COUNT(NET) AS variance FROM title_data GROUP BY DSK ORDER BY variance DESC",
+            "description": "Calculate the variance of NET for each DSK and order by variance in descending order to find the desks with the highest variance.",
+            "columns": [
+                "DSK",
+                "variance"
+            ],
+            "id": "42d665c08dd0b308435058c5ecfdf16ab01a5005a1b65a2c2035f015ef681473",
+            "flag": "cold"
+        },
+        {
+            "columns": [
+                "NET",
+                "PROF_LOSS"
+            ],
+            "sql_script": "SELECT NET, PROF_LOSS, COUNT(*) * 100.0 / (SELECT COUNT(*) FROM title_data) AS probability FROM title_data GROUP BY NET, PROF_LOSS ORDER BY NET, PROF_LOSS",
+            "description": "Calculate the probability distribution of NET profit/loss.",
+            "id": "6d07fa7d0b7c014123f446f949958d6e7b6ae62406f2ee03502e830412913b1d",
+            "flag": "cold"
+        },
+        {
+            "sql_script": "SELECT DATE, SUM(NET) OVER (ORDER BY DATE) AS cumulative_net FROM title_data ORDER BY DATE",
+            "description": "Calculate the cumulative sum of NET profit/loss over time.",
+            "columns": [
+                "DATE",
+                "cumulative_net"
+            ],
+            "id": "1f3dfc695732e0c800aab76e6bf67c66620b671f3dda1c66167b1cd861226cf5",
+            "flag": "cold"
+        },
+        {
+            "sql_script": "SELECT CUR FROM title_data GROUP BY CUR ORDER BY SUM((NET - AVG(NET)) * (NET - AVG(NET))) DESC LIMIT 1",
+            "description": "Find the currency with the most volatile NET profit/loss.",
+            "columns": [
+                "CUR"
+            ],
+            "id": "d3bfb9fd8811db6d17c275b024f9ddae59e3597a4527d69924014a7019595af1",
+            "flag": "cold"
+        },
+        {
+            "description": "Ratio of profitable to loss-making transactions per FACTOR",
+            "columns": [
+                "FACTOR",
+                "Profit_Loss_Ratio"
+            ],
+            "sql_script": "SELECT FACTOR, CAST(SUM(CASE WHEN PROF_LOSS = 'PROFFIT' THEN 1 ELSE 0 END) AS REAL) / SUM(CASE WHEN PROF_LOSS = 'LOSS' THEN 1 ELSE 0 END) AS Profit_Loss_Ratio FROM title_data GROUP BY FACTOR",
+            "id": "c2f4de6a2c5f6c5e34c1115258aeba8b49d86dd8fd2d9fc8f210f5ba989c0fad",
+            "flag": "cold"
+        },
+        {
+            "description": "Calculate the average profit/loss for each portfolio and then calculate the variance of the profit/loss for each portfolio.  Finally, sort by the variance in ascending order to find the portfolios with the most consistently positive profits.",
+            "columns": [
+                "PF"
+            ],
+            "sql_script": "SELECT PF, AVG(CAST(REPLACE(PROF_LOSS, 'PROFFIT', '1') AS REAL)) AS avg_profit,SUM((CAST(REPLACE(PROF_LOSS, 'PROFFIT', '1') AS REAL) - AVG(CAST(REPLACE(PROF_LOSS, 'PROFFIT', '1') AS REAL)) OVER (PARTITION BY PF)) * (CAST(REPLACE(PROF_LOSS, 'PROFFIT', '1') AS REAL) - AVG(CAST(REPLACE(PROF_LOSS, 'PROFFIT', '1') AS REAL)) OVER (PARTITION BY PF))) / COUNT(*) AS variance FROM title_data GROUP BY PF ORDER BY variance ASC",
+            "id": "9cf41885239da609ebbd8e5cea450a2a822161ca1216bcf3250fc6829db0f179",
+            "flag": "cold"
+        },
+        {
+            "sql_script": "SELECT FACTOR, SUM(PROF_LOSS) FROM title_data GROUP BY FACTOR ORDER BY ABS(SUM(PROF_LOSS)) DESC LIMIT 1",
+            "columns": [
+                "FACTOR",
+                "SUM(PROF_LOSS)"
+            ],
+            "description": "Find the factor that contributes most to the total profit/loss variance.",
+            "id": "03adb26067fdb492d7d4f0b3d62e94ff83a9e6135edd06df670d30194354296b",
+            "flag": "cold"
+        },
+        {
+            "columns": [
+                "DSK",
+                "profit_loss_ratio"
+            ],
+            "description": "Calculate the ratio of profit to loss per DSK desk.",
+            "sql_script": "SELECT DSK, SUM(CASE WHEN PROF_LOSS = 'PROFFIT' THEN NET ELSE 0 END) * 1.0 / SUM(CASE WHEN PROF_LOSS = 'LOSS' THEN NET ELSE 0 END) AS profit_loss_ratio FROM title_data GROUP BY DSK",
+            "id": "61c6bdf0c36892edaa817b5281ceafb3114bde202adcb89cd4b9bc46947100b1",
+            "flag": "cold"
+        },
+        {
+            "description": "Find the currency with the highest total profit.",
+            "columns": [
+                "CUR",
+                "SUM(PROF_LOSS) AS TOTAL_PROFIT"
+            ],
+            "sql_script": "SELECT CUR, SUM(PROF_LOSS) AS TOTAL_PROFIT FROM title_data WHERE PROF_LOSS > 0 GROUP BY CUR ORDER BY TOTAL_PROFIT DESC LIMIT 1;",
+            "id": "44ae0f684217d85e6f7bbdfbf3849780c561ffb7a76ca0c5adf409538d56e26e",
+            "flag": "cold"
+        },
+        {
+            "columns": [
+                "FACTOR"
+            ],
+            "description": "Find the factor with the highest frequency of losses.",
+            "sql_script": "SELECT FACTOR FROM title_data WHERE PROF_LOSS = 'LOSS' GROUP BY FACTOR ORDER BY COUNT(*) DESC LIMIT 1;",
+            "id": "66ac980bb47320d34822176e0038380f0acb92e20bd24b1a195efd35f1d072bd",
+            "flag": "cold"
+        }
+    ]
+}

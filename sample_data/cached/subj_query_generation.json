@@ -1,0 +1,79 @@
+{
+    "result": [
+        {
+            "query": "What are the <FACTOR>s that contributed the highest <NET> profit/loss?",
+            "id": "c294e38e35f0166be6daac7b2ed4e41ec670357c93e08ac5f175338e5d2ed726",
+            "flag": "cold"
+        },
+        {
+            "query": "Which <CUR> currencies are driving the top-performing portfolios <PF>?",
+            "id": "04b738ec04a399bdbdb8728b17d980178e00dc7918943bc264c11a82b3093b2f",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the average <NET> profit/loss for <BUIS> by <DATE>?",
+            "id": "4c5ec8435be11380c73fa867c0c29e18d1d07efecb4c6a2c691a423963bfe68e",
+            "flag": "cold"
+        },
+        {
+            "query": "List the top 5 <BUIS> with the highest <NET> profits.",
+            "id": "0421c8eabb7eb2cf943c64ea36ea1fe08e370967b08e5c02f79499b886824caf",
+            "flag": "cold"
+        },
+        {
+            "query": "List the bottom 5 <BUIS> with the lowest <NET> losses.",
+            "id": "c4b85835ada7791539b9eb3d0b782d2c1ddf9b275ba7bf7a11f9a3dd52a96106",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the sum of <NET> profit/loss for each <PF>?",
+            "id": "6286e637c0127eccac3d809fc400e83c50cbfeb058758fb1924e40633ffcc489",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the maximum <NET> profit for <BUIS> on <DATE>?",
+            "id": "3413e8ae4e062d337323259c616806209c6e3aabd5ba68d5ba67eeb537aa085a",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the minimum <NET> loss for <BUIS> on <DATE>?",
+            "id": "970d4b0c54cbb8234f2b74d850c205331481b2627beaefc75c0523d0aaa3d985",
+            "flag": "cold"
+        },
+        {
+            "query": "What are the top 5 <DSK> with the highest <NET> profit/loss?",
+            "id": "88c73cdf5d132bfc71e9ccc473f44a3a686f0fd895097252c1b1e3af2546453e",
+            "flag": "cold"
+        },
+        {
+            "query": "What are the bottom 5 <DSK> with the lowest <NET> profit/loss?",
+            "id": "3ace89b46b541f985a67bfef87ca26ba28e0cba9b9ab563b75034ba13df25f9c",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the average <NET> profit/loss for each <CUR> currency?",
+            "id": "d7063ca6466a8cda096d3236dd9d7c74e8b9b2e5b5543228cf3b11be610e4bf5",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the sum of <NET> profit/loss for each <FACTOR>?",
+            "id": "f02d29ffeb4557c2588d9587f105d0085e2b0d1f2c82c73e20913eeaf4b7f767",
+            "flag": "cold"
+        },
+        {
+            "query": "What are the top 5 <PF> with the highest <NET> profit/loss?",
+            "id": "b392885b1fe8eb3eb171a81b72586cf97ece9c7cebb5b83d16ad9b51696453c1",
+            "flag": "cold"
+        },
+        {
+            "query": "What are the bottom 5 <PF> with the lowest <NET> profit/loss?",
+            "id": "be08436e80e7d5fd02e2e16940ccb55af7c6973326c2375cd48230e9fd71e9fa",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the mean <NET> profit/loss across all <BUIS> for <DATE>?",
+            "id": "4ce7f90786453097d5b9182b1e88163ef8ba30913cb633c8ce29ac0117fde638",
+            "flag": "cold"
+        }
+    ]
+}

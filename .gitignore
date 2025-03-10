@@ -173,4 +173,4 @@ cython_debug/
 
 key.json
 
-sample_data*
+# sample_data*

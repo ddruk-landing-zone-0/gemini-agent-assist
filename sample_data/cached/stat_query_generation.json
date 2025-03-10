@@ -1,0 +1,139 @@
+{
+    "result": [
+        {
+            "query": "What is average, max, min, varaince, sum of <NET> profit/loss?",
+            "id": "8b8034f008ceef96eaf98870b56bffa6f470dc2866a07b75ded62f323eeb07dc",
+            "flag": "cold"
+        },
+        {
+            "query": "What is average, max, min, varaince, sum of <FACTOR> profit/loss grouped by <BUIS>?",
+            "id": "00140b887115de2019c84e1553e432b7fa1d020633400c2f18193f775233f6aa",
+            "flag": "cold"
+        },
+        {
+            "query": "What is average, max, min, varaince, sum of <NET> profit/loss grouped by <CUR> currency?",
+            "id": "d5b85a38ea47fa3751a676b9f9fb44b2e10456dfb2fe5e42209086c7fd9a0a25",
+            "flag": "cold"
+        },
+        {
+            "query": "What is average, max, min, varaince, sum of <NET> profit/loss grouped by top 5 <PF> portfolios?",
+            "id": "36b8f632257a4e52141e0784aa58d2e05015cd31d4c5d91e2f7d941db5370261",
+            "flag": "cold"
+        },
+        {
+            "query": "What is average, max, min, varaince, sum of <NET> profit/loss grouped by bottom 5 <PF> portfolios?",
+            "id": "196d4476546291b3adbeeaef3568d6b73d25677ebd15a318b4548bbb4784f6d5",
+            "flag": "cold"
+        },
+        {
+            "query": "What is average, max, min, varaince, sum of <NET> profit/loss grouped by top 5 <DSK> desks?",
+            "id": "2f9c893059754590155ea6007bde609e2ed820f2af88c87af03a6011356aca47",
+            "flag": "cold"
+        },
+        {
+            "query": "What is average, max, min, varaince, sum of <NET> profit/loss grouped by bottom 5 <DSK> desks?",
+            "id": "5e0eaffee842e76bd7f79fa53308d0669714d64a0b4296d1517618dc41d80501",
+            "flag": "cold"
+        },
+        {
+            "query": "What are the top currencies by average <NET> profit/loss?",
+            "id": "b87a5d7acb84000f966bf338560e38a5eb44c6dddf2a63b37b6b4001b09111ea",
+            "flag": "cold"
+        },
+        {
+            "query": "What are the bottom currencies by average <NET> profit/loss?",
+            "id": "9ca5b5be7129fe791fd3b4d632a3345e8d20dd4e9c11e75753dfc0b97e7610d5",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the total count of transactions for each <FACTOR>?",
+            "id": "1b2f590b6ce1008390a2aca69123d754a014f2a0753911662b90343163b4e484",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the percentage contribution of each <FACTOR> to total profit/loss?",
+            "id": "02a96883298cf5328c0efa81a36e9e3c7b72197db5b421db9632147faec06950",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the trend of total <NET> profit/loss over time (daily, monthly, yearly)?",
+            "id": "8f83b26c136142f8d8413e2ff054d4f1085a7ed6e475d4eb704ef0e0e24d610c",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the moving average of <NET> profit/loss over the past 7 days?",
+            "id": "0407660a4ac8d38a7f74e7ae0d0c12249dace58013f0e9fb74e3074a7a8c198a",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the standard deviation of <NET> profit/loss grouped by <BUIS>?",
+            "id": "2967ca3969e7f10e3f4da3e1493968cff57700f7b71278d085ad7536da2689ce",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the correlation between <FACTOR> and <NET> profit/loss?",
+            "id": "422e1189121c9de3fbc90fbd8998b753a71a883692dcf373b6f47db010a5d966",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the skewness and kurtosis of <NET> profit/loss distribution?",
+            "id": "314f1a272553aa2460b7beb7d8f736df2f5ac3f8e0632614d220bb9f04afba7f",
+            "flag": "cold"
+        },
+        {
+            "query": "Which <PF> portfolios have the highest standard deviation in <NET> profit/loss?",
+            "id": "c5a383279282cf5b5b51d6e150c7d89becdcb02ea0d038e2717e70536ddbbce4",
+            "flag": "cold"
+        },
+        {
+            "query": "Which <DSK> desks have the highest variance in <NET> profit/loss?",
+            "id": "42d665c08dd0b308435058c5ecfdf16ab01a5005a1b65a2c2035f015ef681473",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the probability distribution of <NET> profit/loss?",
+            "id": "6d07fa7d0b7c014123f446f949958d6e7b6ae62406f2ee03502e830412913b1d",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the cumulative sum of <NET> profit/loss over time?",
+            "id": "1f3dfc695732e0c800aab76e6bf67c66620b671f3dda1c66167b1cd861226cf5",
+            "flag": "cold"
+        },
+        {
+            "query": "Which <CUR> currency has the most volatile <NET> profit/loss?",
+            "id": "d3bfb9fd8811db6d17c275b024f9ddae59e3597a4527d69924014a7019595af1",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the ratio of profitable to loss-making transactions per <FACTOR>?",
+            "id": "c2f4de6a2c5f6c5e34c1115258aeba8b49d86dd8fd2d9fc8f210f5ba989c0fad",
+            "flag": "cold"
+        },
+        {
+            "query": "Which <PF> portfolios have the most consistently positive (low variance) profits?",
+            "id": "9cf41885239da609ebbd8e5cea450a2a822161ca1216bcf3250fc6829db0f179",
+            "flag": "cold"
+        },
+        {
+            "query": "Which <FACTOR> contributes most to total profit/loss variance?",
+            "id": "03adb26067fdb492d7d4f0b3d62e94ff83a9e6135edd06df670d30194354296b",
+            "flag": "cold"
+        },
+        {
+            "query": "What is the ratio of profit to loss per <DSK> desk?",
+            "id": "61c6bdf0c36892edaa817b5281ceafb3114bde202adcb89cd4b9bc46947100b1",
+            "flag": "cold"
+        },
+        {
+            "query": "Which <CUR> currency contributes the most to total profit?",
+            "id": "44ae0f684217d85e6f7bbdfbf3849780c561ffb7a76ca0c5adf409538d56e26e",
+            "flag": "cold"
+        },
+        {
+            "query": "Which <FACTOR> has the highest frequency of losses?",
+            "id": "66ac980bb47320d34822176e0038380f0acb92e20bd24b1a195efd35f1d072bd",
+            "flag": "cold"
+        }
+    ]
+}
