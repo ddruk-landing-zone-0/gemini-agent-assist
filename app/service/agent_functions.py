@@ -9,6 +9,7 @@ from ..service.sql_engine_service import get_title_data_inmemory_db, TITLE_DATA_
 import pandas as pd
 import hashlib
 import json
+from typing import Dict, Any, List, Union
 
 
 
@@ -70,7 +71,9 @@ def refine_old_summary_agent(state: AgentState):
                                                    wait_time=state['model']['wait_time'])
 
     # Old summaries from sample_summarized_pnl_commentaries (Note: This is a sample data not cached, admin will provide the data)
+    print(state['cache_location']['sample_summarized_pnl_commentaries'])
     sample_summarized_pnl_commentaries = load_json_data(state['cache_location']['sample_summarized_pnl_commentaries'])
+    print(sample_summarized_pnl_commentaries)
     LOGGER.info(f"State: {state['state']} | Loaded the sample data, {len(sample_summarized_pnl_commentaries)} old summaries found")
     
     # Refine the old summaries
@@ -94,7 +97,6 @@ def refine_old_summary_agent(state: AgentState):
     
     LOGGER.info(f"State: {state['state']} | Refinement of old summaries completed, saved the result to cache and set the cache flag to True")
     return state
-
 
 
 
@@ -164,14 +166,13 @@ def generate_subj_query_agent(state: AgentState):
     # Assign id to each query with sha hash
     for query in state['results'][state['state']]:
         query['id'] = hashlib.sha256(json.dumps(query).encode()).hexdigest()
+        query['flag'] = 'hot'
 
     # Save the result to cache with the state name and {result} key
     save_json_data(state['cache_location'][state['state']], {"result":state['results'][state['state']]})
 
     LOGGER.info(f"State: {state['state']} | Query generation completed, saved the result to cache and set the cache flag to True")
     return state
-
-
 
 
 
@@ -234,6 +235,7 @@ def generate_stat_query_agent(state: AgentState):
     # Assign id to each query with sha hash
     for query in state['results'][state['state']]:
         query['id'] = hashlib.sha256(json.dumps(query).encode()).hexdigest()
+        query['flag'] = 'hot'
         
     # Save the result to cache with the state name and {result} key
     save_json_data(state['cache_location'][state['state']], {"result":state['results'][state['state']]})
@@ -267,9 +269,8 @@ def register_data(state: AgentState):
     TITLE_DATA_INMEM_DB = get_title_data_inmemory_db(rule_based_title_comment_data)
 
     LOGGER.info(f"State: {state['state']} | Data registration completed, saved the data to in-memory DB. Global variable TITLE_DATA_INMEM_DB is set")
-    
-    return state
 
+    return state
 
 
 
@@ -290,8 +291,10 @@ def generate_sql_script_agent(state: AgentState):
 
     # Load the data from cache if the cache flag is set to True
     cached_result = load_cached_results(state)
-    if cached_result:
-        return state
+
+    # We avoid total cache here as the data. We selectively load the cache for the title_data table
+    # if cached_result:
+    #     return state
 
     # Initialize the model
     sql_script_engine =  GeminiJsonEngine(
@@ -315,18 +318,31 @@ def generate_sql_script_agent(state: AgentState):
 
     sql_scripts = []
     for i, query in enumerate(all_queries):
-        user_sql_prompt = [
-            f"You are a SQL expert. Your task is to write a SQL script to query data from the given table. Note: you are generating a SQL script for SQLLite's python library. You must be careful while writing complex queries as it is very sensitive.",
-            f"Library specific notes: STDDEV is not supported in SQLLite. You can use AVG and SUM to calculate the standard deviation.",
-            f"Here is the schema of the table `title_data`: {TITLE_DATA_INMEM_DB.metadata.tables}",
-            f"Here is the are the first few rows of the table `title_data`: {head}",
-            f"User is trying to answer the following query: {query['query']}",
-            f"Write a SQL script to answer the query using the tool `SQLScript`. Your answer must follow the argument strucure of the tool `SQLScript`. You are encouraged to use compound and complex SQL queries to answer the query."
-        ]
-        sql_script = sql_script_engine(user_sql_prompt)[0]
-        sql_scripts.append(sql_script)
-        LOGGER.info(f"State: {state['state']} | {i}/{len(all_queries)} SQL script generated for the query: {query['query'][:20]} ... to {sql_script['sql_script'][:20]} ...")
+        sql_script = None 
+        if query['flag']=='cold' and cached_result['results'][state['state']]:
+            for k in cached_result['results'][state['state']] :
+                if k['id']==query['id']:
+                    sql_script = k
+                    sql_scripts.append(sql_script)
+                    LOGGER.info(f"State: {state['state']} | {i}/{len(all_queries)} SQL script loaded from cache for the query: {query['query'][:20]} ... to {sql_script['sql_script'][:20]} ...")
+                    break
+    
+        if sql_script is None:
+            user_sql_prompt = [
+                f"You are a SQL expert. Your task is to write a SQL script to query data from the given table. Note: you are generating a SQL script for SQLLite's python library. You must be careful while writing complex queries as it is very sensitive.",
+                f"Library specific notes: STDDEV is not supported in SQLLite. You can use AVG and SUM to calculate the standard deviation.",
+                f"Here is the schema of the table `title_data`: {TITLE_DATA_INMEM_DB.metadata.tables}",
+                f"Here is the are the first few rows of the table `title_data`: {head}",
+                f"User is trying to answer the following query: {query['query']}",
+                f"Write a SQL script to answer the query using the tool `SQLScript`. Your answer must follow the argument strucure of the tool `SQLScript`. You are encouraged to use compound and complex SQL queries to answer the query."
+            ]
+            sql_script = sql_script_engine(user_sql_prompt)[0]
+            sql_scripts.append(sql_script)
+            LOGGER.info(f"State: {state['state']} | {i}/{len(all_queries)} SQL script generated for the query: {query['query'][:20]} ... to {sql_script['sql_script'][:20]} ...")
+            query['flag']='cold'
+            LOGGER.info(f"State: {state['state']} | {i}/{len(all_queries)} Query flag changed to cold")
 
+    
     # Save the result to state var and set the cache flag to True
     state['results'][state['state']] = sql_scripts
     state['cache_flag'][state['state']] = True
@@ -334,11 +350,17 @@ def generate_sql_script_agent(state: AgentState):
     # Assign id to each query with the same hash as the query
     for raw_query, sql_script in zip(all_queries, state['results'][state['state']]):
         sql_script['id'] = raw_query['id']
+        sql_script['flag'] = raw_query['flag']
 
     # Save the result to cache with the state name and {result} key
     save_json_data(state['cache_location'][state['state']], {"result":state['results'][state['state']]})
-
     LOGGER.info(f"State: {state['state']} | SQL script generation completed, saved the result to cache and set the cache flag to True")
+
+    # Save the previous state results with proper hot/cold flag
+    save_json_data(state['cache_location']['subj_query_generation'], {"result":subj_queries})
+    save_json_data(state['cache_location']['stat_query_generation'], {"result":stat_queries})
+    LOGGER.info(f"State: {state['state']} | Saved the previous state subj_query_generation and stat_query_generation results to cache with proper all cold flag")
+
     return state
 
 
@@ -361,13 +383,14 @@ def sql_result_agent(state:AgentState):
     state['state'] = 'sql_result'
     LOGGER.info(f"State: {state['state']} | Initializing the agent to generate SQL result")
 
+    #### TODO: Implement Selective Caching for the SQL result. We are currently avoiding the cache for the SQL result as it is not that expensive to run the SQL queries again.
     # Load the data from cache if the cache flag is set to True
-    cached_result = load_cached_results(state)
-    if cached_result:
-        return state
+    # cached_result = load_cached_results(state)
+    # if cached_result:
+    #     return state
 
     global TITLE_DATA_INMEM_DB
-
+    
     # Previous state outputs
     sql_scripts = state['results']['sql_script_generation']
 
@@ -419,6 +442,7 @@ def sql_result_agent(state:AgentState):
     LOGGER.info(f"State: {state['state']} | SQL result generation completed, saved the result to cache and set the cache flag to True")
 
     return state
+    
     
 
 
@@ -499,6 +523,7 @@ def generate_bucket_query_agent(state: AgentState):
 # Description: It generates the final result. It generates the final result from the bucket queries generated in the previous step.
 # It genrates two typed of financial summaries, one from the subjective queries and one from the statistical queries.
 ############################################################################################`
+
 def generate_final_result(state: AgentState):
     state['state'] = 'final_result'
     LOGGER.info(f"State: {state['state']} | Initializing the agent to generate final result")
@@ -536,3 +561,181 @@ def generate_final_result(state: AgentState):
 
     LOGGER.info(f"State: {state['state']} | Final result generation completed, saved the result to cache and set the cache flag to True")
     return state
+
+
+
+
+
+############################################################################################
+# Manual Change State
+# Name: manual_change_state
+# Description: It is used to manually change the state of the agent. It is used to manually change the state of the agent and update the results in the cache.
+# It is used to manually change the state of the agent and update the results in the cache.
+############################################################################################
+def validate_schema(change_state_name: str, new_state_result: Any) -> bool:
+    if change_state_name == "refine_old_summaries":
+        return isinstance(new_state_result, list) and all(isinstance(item, str) for item in new_state_result)
+    
+    elif change_state_name == "sql_script_generation":
+        expected_keys = {"description", "sql_script", "columns", "id", "flag"}
+        return (
+            isinstance(new_state_result, list) and
+            all(
+                isinstance(item, dict) and expected_keys == set(item.keys()) and
+                isinstance(item["description"], str) and
+                isinstance(item["sql_script"], str) and
+                isinstance(item["columns"], list) and all(isinstance(col, str) for col in item["columns"]) and
+                isinstance(item["id"], str) and
+                isinstance(item["flag"], str)
+                for item in new_state_result
+            )
+        )
+    
+    elif change_state_name in {"subj_query_generation", "stat_query_generation"}:
+        expected_keys = {"query", "id", "flag"}
+        return (
+            isinstance(new_state_result, list) and
+            all(
+                isinstance(item, dict) and expected_keys == set(item.keys()) and
+                isinstance(item["query"], str) and
+                isinstance(item["id"], str) and
+                isinstance(item["flag"], str)
+                for item in new_state_result
+            )
+        )
+    
+    return False
+
+def manual_change_state(old_state:AgentState, change_state_name:str, new_state_result:Dict[str, Any]):
+    state_name_array = [
+            'refine_old_summaries',
+            'subj_query_generation',
+            'stat_query_generation',
+            'register_data',
+            'sql_script_generation',
+            'sql_result',
+            'bucket_query_generation',
+            'final_result'
+    ]
+    
+    schema_valid = validate_schema(change_state_name, new_state_result)
+    if not schema_valid:
+        LOGGER.error(f"State: {change_state_name} | Manual change in state {change_state_name} not possible due to schema mismatch")
+        return old_state
+    
+    i = 0
+    for i in range(len(state_name_array)):
+      if state_name_array[i] == change_state_name:
+         break
+      
+    if change_state_name in ['refine_old_summaries', 'sql_script_generation']:
+        old_state['results'][change_state_name] = new_state_result
+        old_state['cache_flag'][change_state_name] = True
+        LOGGER.info(f"State: {change_state_name} | Manual change in state {change_state_name} done both in RAM and Disk cache")
+        save_json_data(old_state['cache_location'][change_state_name], {"result":new_state_result})
+        for j in range(i+1, len(state_name_array)):
+            old_state['results'][state_name_array[j]] = []
+            old_state['cache_flag'][state_name_array[j]] = False
+            save_json_data(old_state['cache_location'][state_name_array[j]], {"result":old_state['results'][state_name_array[j]]})
+            LOGGER.info(f"State: {state_name_array[j]} | Manual RESET state {state_name_array[j]} done both in RAM and Disk cache")
+
+    elif change_state_name in ['subj_query_generation', 'stat_query_generation']:
+        prev_result = old_state['results'][change_state_name]
+        id_to_content_mapping = {
+            result['id']:result for result in prev_result
+        }
+        
+        for result in new_state_result:
+            if result['id'] not in id_to_content_mapping or (result['id'] in id_to_content_mapping and result['query']!=id_to_content_mapping[result['id']]['query']):
+                result['id'] = hashlib.sha256(json.dumps(result).encode()).hexdigest()
+                result['flag'] = 'hot'
+                LOGGER.info(f"Conflict in ID found for the query: {result['query'][:20]}... New ID generated and flag set to hot")
+
+
+        old_state['results'][change_state_name] = new_state_result
+        old_state['cache_flag'][change_state_name] = True
+        save_json_data(old_state['cache_location'][change_state_name], {"result":new_state_result})
+        LOGGER.info(f"State: {change_state_name} | Manual change in state {change_state_name} done both in RAM and Disk cache")
+    
+    else:
+        LOGGER.warning(f"State: {change_state_name} | Manual change in state {change_state_name} not possible")
+
+    # Store the state
+    save_json_data(old_state['cache_location']['state_config'], old_state)
+    LOGGER.info(f"State: {change_state_name} | State config saved to disk cache")
+
+    return old_state
+
+
+
+
+############################################################################################
+# Reset All State
+# Name: reset_all_state
+# Description: It is used to reset all the states to the initial state. It is used to reset all the states to the initial state.
+############################################################################################
+
+def reset_all_state():
+    init_state_snap = {
+            'state': 'start',
+            'model':{
+                'model_name':'gemini-2.0-flash-001',
+                'temperature': 0.5,
+                'max_output_tokens': 512,
+                'max_retries':5,
+                'wait_time':30
+            },
+            'results':{
+                'refine_old_summaries':[],
+                'subj_query_generation':[],
+                'stat_query_generation':[],
+                'register_data':[],
+                'sql_script_generation':[],
+                'sql_result':[],
+                'bucket_query_generation':[],
+                'final_result':[]
+            },
+            'cache_location':{
+                "sample_summarized_pnl_commentaries":"../sample_data/sample_summarized_pnl_commentaries.json",
+                "rule_based_title_comment_data":"../sample_data/rule_based_title_comment_data.json",
+
+                "state_config":"../sample_data/cached/state_config.json",
+                
+                "refine_old_summaries":"./sample_data/cached/refine_old_summaries.json",
+                "subj_query_generation":"./sample_data/cached/subj_query_generation.json",
+                "stat_query_generation":"./sample_data/cached/stat_query_generation.json",
+                "register_data":"./sample_data/cached/register_data.json",
+                "sql_script_generation":"./sample_data/cached/sql_script_generation.json",
+                "sql_result":"./sample_data/cached/sql_result.json",
+                "bucket_query_generation":"./sample_data/cached/bucket_query_generation.json",
+                "final_result":"./sample_data/cached/final_result.json"
+            },
+            'cache_flag':{
+                "refine_old_summaries":False,
+                "subj_query_generation":False,
+                "stat_query_generation":False,
+                "register_data":False,
+                "sql_script_generation":False,
+                "sql_result":False,
+                "bucket_query_generation":False,
+                "final_result":False
+            }
+        }
+    save_json_data(init_state_snap['cache_location']['state_config'], init_state_snap)
+    LOGGER.info(f"State: reset_all_state | All states reset to initial state")
+    return init_state_snap
+
+
+
+############################################################################################
+# Load State
+# Name: load_current_state
+# Description: It is used to load the state from the disk cache. It is used to load the state from the disk cache.
+############################################################################################
+
+def load_current_state(sate_config_path):
+    snap = load_json_data(sate_config_path)
+    if snap is None:
+        snap = reset_all_state()
+    LOGGER.info(f"State: load_state | State loaded from disk cache")
+    return snap
