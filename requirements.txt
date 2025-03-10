@@ -9,3 +9,4 @@ langchain
 grandalf
 gunicorn
 flask
+pandas
